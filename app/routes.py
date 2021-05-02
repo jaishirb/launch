@@ -1,4 +1,3 @@
-import json
 import csv
 
 from models import Customer, db
@@ -7,7 +6,6 @@ from flask import request
 from flask_marshmallow import Marshmallow
 from config import filename
 from flask_rq2 import RQ
-
 
 app = Flask(__name__)
 app.config['RQ_REDIS_URL'] = 'redis://redis:6379'
@@ -56,8 +54,11 @@ def fetch_all():
 
 @app.route('/customers/<customer_id>', methods=['GET'])
 def fetch(customer_id):
-    customer = Customer.query.filter_by(id=customer_id).first()
-    return {'response': post_schema.dump(customer)}
+    customer = Customer.query.filter_by(id=customer_id)
+    if customer.scalar() is not None:
+        customer = customer.first()
+        return {'response': post_schema.dump(customer)}
+    return {'response': {'status': 'object not found'}}, 404
 
 
 @app.route('/customers/add/', methods=['POST'])
@@ -88,21 +89,28 @@ def add():
 
 @app.route('/customers/remove/<customer_id>', methods=['DELETE'])
 def remove(customer_id):
-    Customer.query.filter_by(id=customer_id).delete()
-    db.session.commit()
-    response = {'response': {'status': 'deleted'}}
-    return response, 200
+    customer = Customer.query.filter_by(id=customer_id)
+    if customer.scalar() is not None:
+        customer.delete()
+        db.session.commit()
+        response = {'response': {'status': 'deleted'}}
+        return response, 200
+    return {'response': {'status': 'object not found'}}, 404
 
 
 @app.route('/customers/edit/<customer_id>', methods=['PATCH'])
 def edit(customer_id):
-    data = request.get_json()
-    city = data['city']
-    county = data['county']
-    state = data['state']
-    customer_to_update = Customer.query.filter_by(id=customer_id).first()
-    customer_to_update.city = city
-    customer_to_update.county = county
-    customer_to_update.state = state
-    db.session.commit()
-    return {'response': post_schema.dump(customer_to_update)}
+    customer_to_update = Customer.query.filter_by(id=customer_id)
+    if customer_to_update.scalar() is not None:
+        customer_to_update = customer_to_update.first()
+        data = request.get_json()
+        city = data['city']
+        county = data['county']
+        state = data['state']
+
+        customer_to_update.city = city
+        customer_to_update.county = county
+        customer_to_update.state = state
+        db.session.commit()
+        return {'response': post_schema.dump(customer_to_update)}
+    return {'response': {'status': 'object not found'}}, 404
