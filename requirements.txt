@@ -8,3 +8,4 @@ Flask-RQ2==18.3
 flask_marshmallow==0.14.0
 coverage==5.5
 pytest==6.2.3
+flask-cors==3.0.10

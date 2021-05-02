@@ -6,8 +6,11 @@ from flask import request
 from flask_marshmallow import Marshmallow
 from config import filename
 from flask_rq2 import RQ
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
 app.config['RQ_REDIS_URL'] = 'redis://redis:6379'
 rq = RQ(app)
 ma = Marshmallow(app)
