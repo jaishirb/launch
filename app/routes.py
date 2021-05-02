@@ -8,13 +8,13 @@ import csv
 from config import filename
 from flask_rq2 import RQ
 
-
 app = Flask(__name__)
 app.config['RQ_REDIS_URL'] = 'redis://redis:6379'
 rq = RQ(app)
 ma = Marshmallow(app)
 default_queue = rq.get_queue()
 default_worker = rq.get_worker()
+default_worker.work(burst=True)
 
 
 @rq.job
@@ -86,7 +86,6 @@ def add():
         get_related_info.queue(zip_code, response['id'])
         job = default_queue.enqueue(get_related_info,
                                     args=(zip_code, response['id']))
-        default_worker.work(burst=True)
         return {'response': response}
     return {'response': {'status': 'email already exists'}}
 
