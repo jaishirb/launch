@@ -1,21 +1,18 @@
 import json
+import csv
 
 from models import Customer, db
 from flask import Flask, jsonify, request
 from flask import request
 from flask_marshmallow import Marshmallow
-import csv
 from config import filename
 from flask_rq2 import RQ
+
 
 app = Flask(__name__)
 app.config['RQ_REDIS_URL'] = 'redis://redis:6379'
 rq = RQ(app)
 ma = Marshmallow(app)
-default_queue = rq.get_queue()
-default_worker = rq.get_worker()
-scheduler = rq.get_scheduler(interval=5)
-scheduler.run()
 
 
 @rq.job
@@ -85,8 +82,6 @@ def add():
         db.session.commit()
         response = post_schema.dump(customer)
         get_related_info.queue(zip_code, response['id'])
-        job = default_queue.enqueue(get_related_info,
-                                    args=(zip_code, response['id']))
         return {'response': response}
     return {'response': {'status': 'email already exists'}}
 
@@ -95,7 +90,8 @@ def add():
 def remove(customer_id):
     Customer.query.filter_by(id=customer_id).delete()
     db.session.commit()
-    return json.dumps("Deleted"), 200
+    response = {'response': {'status': 'deleted'}}
+    return response, 200
 
 
 @app.route('/customers/edit/<customer_id>', methods=['PATCH'])

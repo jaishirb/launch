@@ -16,6 +16,18 @@ services:
     depends_on:
       - database
 
+  worker:
+    container_name: worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: docker/database.conf
+    links:
+      - redis
+    depends_on:
+      - database
+    command: ["flask", "rq", "worker"]
+
   database:
     container_name: postgres
     image: postgres:latest
@@ -29,6 +41,7 @@ services:
     command: -p 5433
 
   redis:
+    container_name: redis
     image: redis:5.0
 
 volumes:
