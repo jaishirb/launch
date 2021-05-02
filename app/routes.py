@@ -14,7 +14,8 @@ rq = RQ(app)
 ma = Marshmallow(app)
 default_queue = rq.get_queue()
 default_worker = rq.get_worker()
-default_worker.work(burst=True)
+scheduler = rq.get_scheduler(interval=5)
+scheduler.run()
 
 
 @rq.job
