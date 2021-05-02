@@ -1,0 +1,1 @@
+docker exec flask flask db migrate

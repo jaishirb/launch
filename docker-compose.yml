@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+  app:
+    container_name: flask
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: docker/database.conf
+    ports:
+    - 80:80
+    expose:
+      - 80
+    links:
+      - redis
+    depends_on:
+      - database
+
+  database:
+    container_name: postgres
+    image: postgres:latest
+    env_file: docker/database.conf
+    expose:
+      - 5433
+    ports:
+      - 5433:5432
+    volumes:
+      - db_volume:/var/lib/postgresql
+    command: -p 5433
+
+  redis:
+    image: redis:5.0
+
+volumes:
+  db_volume:

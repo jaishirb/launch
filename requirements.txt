@@ -1,0 +1,10 @@
+Flask==1.1.2
+flask_sqlalchemy==2.5.1
+RUST==0.1.1
+uWSGI==2.0.19.1
+psycopg2==2.8.6
+Flask-Migrate==2.7.0
+Flask-RQ2==18.3
+flask_marshmallow==0.14.0
+coverage==5.5
+pytest==6.2.3
