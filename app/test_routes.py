@@ -1,12 +1,15 @@
 from routes import app as flask_app
 from config import DATABASE_CONNECTION_URI
 from models import db
+import random
 
 import os
 import tempfile
 
 import pytest
 import json
+
+n = random.randint(0, 100)
 
 
 @pytest.fixture
@@ -30,7 +33,7 @@ def test_post_customer(client):
         "first_name": "jaisir",
         "middle_name": "alex",
         "last_name": "bayuelo",
-        "email": "jaisirenterprisex@gmail.com",
+        "email": f"jaisirtest_{n}@gmail.com",
         "zip_code": 12184
     }
     send_data = json.dumps(data)
