@@ -30,8 +30,8 @@ def test_post_customer(client):
         "first_name": "jaisir",
         "middle_name": "alex",
         "last_name": "bayuelo",
-        "email": "jaisirenterprise@gmail.com",
-        "zip_code": 501
+        "email": "jaisirenterprisex@gmail.com",
+        "zip_code": 12184
     }
     send_data = json.dumps(data)
     response = client.post('/customers/add/',
