@@ -17,6 +17,7 @@ CORS(app)
 app.config['RQ_REDIS_URL'] = 'redis://redis:6379'
 rq = RQ(app)
 ma = Marshmallow(app)
+flag = True
 
 
 @rq.job
@@ -94,6 +95,7 @@ class DataGetSchema(ma.Schema):
 
 data_schema = DataGetSchema()
 data_schemas = DataGetSchema(many=True)
+most_common.queue()
 
 
 @app.route('/customers/all/', methods=['GET'])
@@ -170,8 +172,12 @@ def calc_distance():
 
 @app.route('/customers/common/process/', methods=['GET'])
 def common():
-    most_common.queue()
-    return {'response': {'status': 'processing'}}
+    global flag
+    if flag:
+        most_common.queue()
+        flag = False
+        return {'response': {'status': 'processing'}}
+    return {'response': {'status': 'processing was already executed'}}, 400
 
 
 @app.route('/customers/common/all/', methods=['GET'])
