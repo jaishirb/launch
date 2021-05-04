@@ -75,7 +75,9 @@ class CustomerPostSchema(ma.Schema):
                   "zip_code",
                   "city",
                   "county",
-                  "state"
+                  "state",
+                  "lat",
+                  "lon"
                   )
         model = Customer
 
