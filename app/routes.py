@@ -178,3 +178,11 @@ def common():
 def get_all():
     data = Data.query.all()
     return {'response': data_schemas.dump(data)}
+
+
+@app.route('/customers/reset/', methods=['DELETE'])
+def reset():
+    Customer.query.delete()
+    Data.query.delete()
+    db.session.commit()
+    return {'response': {'status': 'database reset ok'}}
