@@ -39,7 +39,7 @@ def get_related_info(zip_code_customer, customer_id):
 @rq.job
 def most_common():
     df = pd.read_csv(filename)
-    df_top_freq = df.copy().groupby('County')['Zip Code'].agg(
+    df_top_freq = df.groupby('County')['Zip Code'].agg(
         County_count=len).sort_values(
         "County_count", ascending=False)
     general_data = {}
