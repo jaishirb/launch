@@ -188,7 +188,9 @@ def get_all():
 
 @app.route('/customers/reset/', methods=['DELETE'])
 def reset():
+    global flag
     Customer.query.delete()
     Data.query.delete()
     db.session.commit()
+    flag = True
     return {'response': {'status': 'database reset ok'}}
