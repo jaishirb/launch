@@ -97,7 +97,6 @@ class DataGetSchema(ma.Schema):
 
 data_schema = DataGetSchema()
 data_schemas = DataGetSchema(many=True)
-most_common.queue()
 
 
 @app.route('/customers/all/', methods=['GET'])
