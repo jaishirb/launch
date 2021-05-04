@@ -17,7 +17,6 @@ CORS(app)
 app.config['RQ_REDIS_URL'] = 'redis://redis:6379'
 rq = RQ(app)
 ma = Marshmallow(app)
-flag = True
 
 
 @rq.job
@@ -173,10 +172,8 @@ def calc_distance():
 
 @app.route('/customers/common/process/', methods=['GET'])
 def common():
-    global flag
-    if flag:
+    if len(Data.query.all()) == 0:
         most_common.queue()
-        flag = False
         return {'response': {'status': 'processing'}}
     return {'response': {'status': 'processing was already executed'}}, 400
 
@@ -189,9 +186,7 @@ def get_all():
 
 @app.route('/customers/reset/', methods=['DELETE'])
 def reset():
-    global flag
     Customer.query.delete()
     Data.query.delete()
     db.session.commit()
-    flag = True
     return {'response': {'status': 'database reset ok'}}
